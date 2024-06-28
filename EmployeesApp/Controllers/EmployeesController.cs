@@ -65,7 +65,7 @@ namespace EmployeesApp.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return View(employee.Id);
+                    return View(employee);
                 }
                 employeeRepository.UpdateEmployee(employee);
                 return RedirectToAction(nameof(Index));
@@ -86,11 +86,11 @@ namespace EmployeesApp.Controllers
         // POST: EmployeeController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(Guid id, Employee? employee)
+        public ActionResult Delete([Bind("Id")]Employee employee)
         {
             try
             {
-                employeeRepository.DeleteEmployee(id);
+                employeeRepository.DeleteEmployee(employee.Id);
                 return RedirectToAction(nameof(Index));
             }
             catch
