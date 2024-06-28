@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesApp.Controllers
 {
-    public class EmployeeController(IEmployeeRepository employeeRepository) : Controller
+    public class EmployeesController(IEmployeeRepository employeeRepository) : Controller
     {
         // GET: EmployeeController
         public ActionResult Index()

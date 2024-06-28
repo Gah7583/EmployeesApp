@@ -1,4 +1,14 @@
+using EmployeesApp.Contracts;
+using EmployeesApp.Extensions;
+using EmployeesApp.Models;
+using EmployeesApp.Repository;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<EmployeeContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("PsqlConnection")));
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -24,4 +34,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Employee}/{action=Index}/{id?}");
 
+app.MigrationDatabase();
 app.Run();
