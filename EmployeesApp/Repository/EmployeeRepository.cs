@@ -35,7 +35,7 @@ namespace EmployeesApp.Repository
             }
         }
 
-        public IEnumerable<Employee> GetAll() => [.. context.Employees];
+        public IEnumerable<Employee> GetAll() => context.Employees.ToList();
 
         public Employee GetEmployeeById(Guid id) => context.Employees.SingleOrDefault(e => e.Id.Equals(id));
 

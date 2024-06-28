@@ -2,6 +2,7 @@
 using EmployeesApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace EmployeesApp.Controllers
 {
@@ -75,17 +76,20 @@ namespace EmployeesApp.Controllers
             }
         }
 
+        // GET: EmployeesController/Delete/5
+        public ActionResult Delete(Guid id)
+        {
+            var employee = employeeRepository.GetEmployeeById(id);
+            return View(employee);
+        }
+
         // POST: EmployeeController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(Guid id)
+        public ActionResult Delete(Guid id, Employee? employee)
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
                 employeeRepository.DeleteEmployee(id);
                 return RedirectToAction(nameof(Index));
             }
@@ -93,6 +97,12 @@ namespace EmployeesApp.Controllers
             {
                 return View();
             }
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public ActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }
