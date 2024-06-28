@@ -8,6 +8,6 @@ namespace EmployeesApp.Contracts
         Employee GetEmployeeById(Guid id);
         void CreateEmployee(Employee employee);
         void UpdateEmployee(Employee employee);
-        void DeleteEmployee(Employee employee);
+        void DeleteEmployee(Guid id);
     }
 }

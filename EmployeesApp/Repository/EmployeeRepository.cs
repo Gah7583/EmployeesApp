@@ -18,9 +18,9 @@ namespace EmployeesApp.Repository
             }
         }
 
-        public void DeleteEmployee(Employee employee)
+        public void DeleteEmployee(Guid id)
         {
-           var result = context.Employees.SingleOrDefault(e => e.Id.Equals(employee.Id));
+           var result = context.Employees.SingleOrDefault(e => e.Id.Equals(id));
             if (result != null)
             {
                 try

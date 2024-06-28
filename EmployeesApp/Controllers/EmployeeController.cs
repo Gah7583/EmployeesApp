@@ -1,20 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EmployeesApp.Contracts;
+using EmployeesApp.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesApp.Controllers
 {
-    public class EmployeeController : Controller
+    public class EmployeeController(IEmployeeRepository employeeRepository) : Controller
     {
         // GET: EmployeeController
         public ActionResult Index()
         {
-            return View();
+            var employees = employeeRepository.GetAll();
+            return View(employees);
         }
 
         // GET: EmployeeController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(Guid id)
         {
-            return View();
+            var employee = employeeRepository.GetEmployeeById(id);
+            return View(employee);
         }
 
         // GET: EmployeeController/Create
@@ -26,10 +30,16 @@ namespace EmployeesApp.Controllers
         // POST: EmployeeController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([Bind("Name,AccountNumber,Age")] Employee employee)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+
+                    return View(employee);
+                }
+                employeeRepository.CreateEmployee(employee);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -39,18 +49,24 @@ namespace EmployeesApp.Controllers
         }
 
         // GET: EmployeeController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
-            return View();
+            var employee = employeeRepository.GetEmployeeById(id);
+            return View(employee);
         }
 
         // POST: EmployeeController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit([Bind("Id,Name,AccountNumber,Age")] Employee employee)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return View(employee.Id);
+                }
+                employeeRepository.UpdateEmployee(employee);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -59,19 +75,18 @@ namespace EmployeesApp.Controllers
             }
         }
 
-        // GET: EmployeeController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
         // POST: EmployeeController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(Guid id)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                employeeRepository.DeleteEmployee(id);
                 return RedirectToAction(nameof(Index));
             }
             catch
