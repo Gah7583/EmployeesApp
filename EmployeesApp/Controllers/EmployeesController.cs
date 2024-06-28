@@ -1,12 +1,13 @@
 ﻿using EmployeesApp.Contracts;
 using EmployeesApp.Models;
+using EmployeesApp.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace EmployeesApp.Controllers
 {
-    public class EmployeesController(IEmployeeRepository employeeRepository) : Controller
+    public class EmployeesController(IEmployeeRepository employeeRepository, AccountNumberValidation validation) : Controller
     {
         // GET: EmployeeController
         public ActionResult Index()
@@ -38,6 +39,11 @@ namespace EmployeesApp.Controllers
                 if (!ModelState.IsValid)
                 {
 
+                    return View(employee);
+                }
+                if (!validation.IsValid(employee.AccountNumber))
+                {
+                    ModelState.AddModelError("AccountNumber", "Account number is invalid");
                     return View(employee);
                 }
                 employeeRepository.CreateEmployee(employee);
