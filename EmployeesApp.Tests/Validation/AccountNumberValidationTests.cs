@@ -11,6 +11,7 @@ namespace EmployeesApp.Tests.Validation
     {
         private readonly AccountNumberValidation _validation;
 
+
         public AccountNumberValidationTests() => _validation = new AccountNumberValidation();
 
         [Fact]

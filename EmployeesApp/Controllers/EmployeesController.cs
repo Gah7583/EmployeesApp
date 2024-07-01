@@ -7,8 +7,9 @@ using System.Diagnostics;
 
 namespace EmployeesApp.Controllers
 {
-    public class EmployeesController(IEmployeeRepository employeeRepository, AccountNumberValidation validation) : Controller
+    public class EmployeesController(IEmployeeRepository employeeRepository, AccountNumberValidation accountNumberValidation) : Controller
     {
+
         // GET: EmployeeController
         public ActionResult Index()
         {
@@ -41,7 +42,7 @@ namespace EmployeesApp.Controllers
 
                     return View(employee);
                 }
-                if (!validation.IsValid(employee.AccountNumber))
+                if (!accountNumberValidation.IsValid(employee.AccountNumber))
                 {
                     ModelState.AddModelError("AccountNumber", "Account number is invalid");
                     return View(employee);

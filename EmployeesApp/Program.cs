@@ -2,12 +2,14 @@ using EmployeesApp.Contracts;
 using EmployeesApp.Extensions;
 using EmployeesApp.Models;
 using EmployeesApp.Repository;
+using EmployeesApp.Validation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<EmployeeContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("PsqlConnection")));
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<AccountNumberValidation, AccountNumberValidation>();
 
 
 // Add services to the container.
