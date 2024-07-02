@@ -2,13 +2,9 @@
 using EmployeesApp.Controllers;
 using EmployeesApp.Models;
 using EmployeesApp.Validation;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeesApp.Tests.Validation
 {
@@ -29,7 +25,7 @@ namespace EmployeesApp.Tests.Validation
         public void Index_ActionExecutes_ReturnsViewForIndex()
         {
             var result = _employeesController.Index();
-            Assert.IsType<ViewResult>(result);
+            result.Should().BeOfType<ViewResult>();
         }
 
         [Fact]
@@ -39,8 +35,8 @@ namespace EmployeesApp.Tests.Validation
 
             var result = _employeesController.Index();
 
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.IsType<List<Employee>>(viewResult.Model);
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeOfType<List<Employee>>();
         }
 
         [Fact]
@@ -50,9 +46,9 @@ namespace EmployeesApp.Tests.Validation
 
             var result = _employeesController.Index();
 
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var employees = Assert.IsType<List<Employee>>(viewResult.Model);
-            Assert.Equal(2, employees.Count);
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var employees = viewResult.Model.Should().BeAssignableTo<List<Employee>>().Subject;
+            employees.Should().HaveCount(2);
         }
 
         [Fact]
@@ -60,7 +56,7 @@ namespace EmployeesApp.Tests.Validation
         {
             var result = _employeesController.Create();
 
-            Assert.IsType<ViewResult>(result);
+            result.Should().BeOfType<ViewResult>();
         }
 
         [Fact]
@@ -72,11 +68,11 @@ namespace EmployeesApp.Tests.Validation
 
             var result = _employeesController.Create(employee);
 
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var testEmployee = Assert.IsType<Employee>(viewResult.Model);
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var testEmployee = viewResult.Model.Should().BeOfType<Employee>().Subject;
 
-            Assert.Equal(employee.AccountNumber, testEmployee.AccountNumber);
-            Assert.Equal(employee.Age, testEmployee.Age);
+            employee.AccountNumber.Should().Be(testEmployee.AccountNumber);
+            employee.Age.Should().Be(testEmployee.Age);
         }
 
         [Fact]
@@ -88,7 +84,7 @@ namespace EmployeesApp.Tests.Validation
 
             _employeesController.Create(employee);
 
-            _employeeRepositoryMock.Verify(x => x.CreateEmployee(It.IsAny<Employee>()), Times.Never);
+            _employeeRepositoryMock.Invocations.Should().NotContain(x => x.Method.Name == nameof(IEmployeeRepository.CreateEmployee) && x.Arguments.Any(a => a is Employee));
         }
 
         [Fact]
@@ -106,11 +102,11 @@ namespace EmployeesApp.Tests.Validation
             };
 
             _employeesController.Create(employee);
-            _employeeRepositoryMock.Verify(x => x.CreateEmployee(It.IsAny<Employee>()), Times.Once);
+            _employeeRepositoryMock.Invocations.Should().Contain(x => x.Method.Name == nameof(IEmployeeRepository.CreateEmployee) && x.Arguments.Any(a => a is Employee)).And.HaveCount(1);
 
-            Assert.Equal(emp.Name, employee.Name);
-            Assert.Equal(emp.Age, employee.Age);
-            Assert.Equal(emp.AccountNumber, employee.AccountNumber);
+            emp.Name.Should().Be(employee.Name);
+            emp.Age.Should().Be(employee.Age);
+            emp.AccountNumber.Should().Be(employee.AccountNumber);
         }
 
         [Fact]
@@ -125,9 +121,9 @@ namespace EmployeesApp.Tests.Validation
 
             var result = _employeesController.Create(employee);
 
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
 
-            Assert.Equal("Index", redirectToActionResult.ActionName);
+            redirectToActionResult.ActionName.Should().Be("Index");
         }
     }
 }

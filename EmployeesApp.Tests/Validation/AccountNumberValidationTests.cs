@@ -1,10 +1,5 @@
 ﻿using EmployeesApp.Validation;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeesApp.Tests.Validation
 {
@@ -37,6 +32,6 @@ namespace EmployeesApp.Tests.Validation
         [InlineData("123-1234567890=12")]
         [InlineData("123+1234567890-12")]
         [InlineData("123+1234567890=12")]
-        public void IsValid_InvalidDelimiters_ThrowsArgumentException(string accNumber) => Assert.Throws<ArgumentException>(() => _validation.IsValid(accNumber));
+        public void IsValid_InvalidDelimiters_ThrowsArgumentException(string accNumber) => _validation.Invoking(anv => anv.IsValid(accNumber)).Should().Throw<ArgumentException>();
     }
 }
