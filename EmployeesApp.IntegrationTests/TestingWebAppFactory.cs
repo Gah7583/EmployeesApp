@@ -21,6 +21,12 @@ namespace EmployeesApp.IntegrationTests
                     options.UseInMemoryDatabase("InMemoryEmployeeTest");
                 });
 
+                services.AddAntiforgery(t => 
+                { 
+                    t.Cookie.Name = AntiForgeryTokenExtractor.AntiForgeryCookieName;
+                    t.FormFieldName = AntiForgeryTokenExtractor.AntiForgeryFieldName;
+                });
+
                 var sp = services.BuildServiceProvider();
                 using (var scope = sp.CreateScope())
                 using (var appContext = scope.ServiceProvider.GetRequiredService<EmployeeContext>())

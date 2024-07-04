@@ -32,7 +32,7 @@ namespace EmployeesApp.Controllers
 
         // POST: EmployeeController/Create
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public ActionResult Create([Bind("Name,AccountNumber,Age")] Employee employee)
         {
             try

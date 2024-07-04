@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Net.Http.Headers;
 
 namespace EmployeesApp.IntegrationTests
 {
@@ -35,10 +36,15 @@ namespace EmployeesApp.IntegrationTests
         [Fact]
         public async Task Create_SentWrongModel_ReturnsViewWithErrorMessaged()
         {
+            var initRequest = await _httpClient.GetAsync("/Employees/Create");
+            var antiForgeryValues = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(initRequest);
+
             var postRequest = new HttpRequestMessage(HttpMethod.Post, "/Employees/Create");
+            postRequest.Headers.Add("Cookie", new CookieHeaderValue(AntiForgeryTokenExtractor.AntiForgeryCookieName, antiForgeryValues.cookieValue).ToString());
 
             var formModel = new Dictionary<string, string>
             {
+                {AntiForgeryTokenExtractor.AntiForgeryFieldName, antiForgeryValues.fieldValue },
                 {"Name", "New Employee"},
                 {"Age", "25"}
             };
@@ -57,10 +63,15 @@ namespace EmployeesApp.IntegrationTests
         [Fact]
         public async Task Create_WhenPOSTExecuted_ReturnsToIndexViewWithCreatedEmployee()
         {
+            var initResponse = await _httpClient.GetAsync("/Employees/Create");
+            var antiForgeryValues = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(initResponse);
+
             var postRequest = new HttpRequestMessage(HttpMethod.Post, "/Employees/Create");
+            postRequest.Headers.Add("Cookie", new CookieHeaderValue(AntiForgeryTokenExtractor.AntiForgeryCookieName, antiForgeryValues.cookieValue).ToString());
 
             var formModel = new Dictionary<string, string>
             {
+                {AntiForgeryTokenExtractor.AntiForgeryFieldName, antiForgeryValues.fieldValue},
                 {"Name", "New Employee"},
                 {"Age", "25"},
                 {"AccountNumber", "123-1234567890-12"}
