@@ -38,3 +38,5 @@ app.MapControllerRoute(
 
 app.MigrationDatabase();
 app.Run();
+
+public partial class Program { };

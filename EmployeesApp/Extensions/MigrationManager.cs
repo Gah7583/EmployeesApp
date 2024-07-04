@@ -13,6 +13,7 @@ namespace EmployeesApp.Extensions
                 {
                     try
                     {
+                        if(appContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
                         appContext.Database.Migrate();
                     }
                     catch (Exception ex)
