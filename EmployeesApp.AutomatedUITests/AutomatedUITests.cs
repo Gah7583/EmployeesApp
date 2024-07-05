@@ -7,8 +7,14 @@ namespace EmployeesApp.AutomatedUITests
     public class AutomatedUITests : IDisposable
     {
         private readonly IWebDriver _driver;
+        private readonly EmployeePage _employeePage;
 
-        public AutomatedUITests() => _driver = new ChromeDriver();
+        public AutomatedUITests() 
+        {
+            _driver = new ChromeDriver();
+            _employeePage = new EmployeePage(_driver);
+            _employeePage.Navigate();
+        }
 
         public void Dispose()
         {
@@ -19,43 +25,28 @@ namespace EmployeesApp.AutomatedUITests
         [Fact]
         public void Create_WhenExecuted_ReturnsCreateView()
         {
-            _driver.Navigate().GoToUrl("https://localhost:7019/Employees/Create");
-
-            _driver.Title.Should().Be("Create - EmployeesApp");
-            _driver.PageSource.Should().Contain("Please provide a new employee data");
+            _employeePage.Title.Should().Be("Create - EmployeesApp");
+            _employeePage.Source.Should().Contain("Please provide a new employee data");
         }
 
         [Fact]
         public void Create_WrongModelData_ReturnsErrorMessage()
         {
-            _driver.Navigate().GoToUrl("https://localhost:7019/Employees/Create");
-
-            _driver.FindElement(By.Id("Name")).SendKeys("Test Employee");
-
-            _driver.FindElement(By.Id("Age")).SendKeys("34");
-
-            _driver.FindElement(By.Id("Create")).Click();
-
-            var errorMessage = _driver.FindElement(By.Id("AccountNumber-error")).Text;
-
-            errorMessage.Should().Be("Account number is required");
+            _employeePage.PopulateName("New Name");
+            _employeePage.PopulateAge("34");
+            _employeePage.ClickCreate();
+            _employeePage.AccountNumberErrorMessage.Should().Be("Account number is required");
         }
 
         [Fact]
         public void Create_WhenSuccessfullyExecuted_ReturnsIndexViewWithNewEmployee()
         {
-            _driver.Navigate().GoToUrl("https://localhost:7019/Employees/Create");
-
-            _driver.FindElement(By.Id("Name")).SendKeys("Another Test Employee");
-
-            _driver.FindElement(By.Id("Age")).SendKeys("34");
-
-            _driver.FindElement(By.Id("AccountNumber")).SendKeys("123-1234567890-12");
-
-            _driver.FindElement(By.Id("Create")).Click();
-
-            _driver.Title.Should().Be("Index - EmployeesApp");
-            _driver.PageSource.Should().ContainAll("Another Test Employee", "34", "123-1234567890-12");
+            _employeePage.PopulateName("Another Test Employee");
+            _employeePage.PopulateAge("34");
+            _employeePage.PopulateAccountNumber("123-1234567890-12");
+            _employeePage.ClickCreate();
+            _employeePage.Title.Should().Be("Index - EmployeesApp");
+            _employeePage.Source.Should().ContainAll("Another Test Employee", "34", "123-1234567890-12");
         }
     }
 }
